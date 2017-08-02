@@ -38,10 +38,11 @@ function viewImage() {
 #rename a given file $1 with $2
 #if file already exists, a postfix is added to the file to be renamed
 function renameFile() {
-    if [ -f "$1"] ]; then
+    echo "File '$1' to be renamed"
+    if [ -e "$1" ]; then
         y=1
-        $filename_new=$2
-        $ext=$3
+        filename_new="$2"
+        ext=$3
 	
     	while [ -f "$filename_new.$ext" ]; do
     		count="0$y"
@@ -145,76 +146,84 @@ declare pattern
 # https://stackoverflow.com/questions/16553089/dynamic-variable-names-in-bash
 declare -A lastvalues=()
 
-skip=FALSE
+skip=false
 
 #outter loop: do for each file submitted via command line
 while [[ $1 ]]
 do
     # get filename extension
-	filename_orig=$1
+	filename_orig="$1"
 	ext=${filename_orig:(-3)}
     
-    viewImage $1
+    viewImage "$1"
     # load variables.cfg for each file (allows modifications of values while script is running)
     # good idea? memory consumption or other negative impact?
-    source variables.cfg
+    DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+    echo "$DIR/variables.cfg"
+    source "$DIR/variables.cfg"
 
     #create a list of all patterns to select
     createList "main"
-    #echo "Pattern: $pattern"
+    if [[ "$pattern" != "" ]]; then
+        echo "Selected pattern: $pattern"
 
-    # iterate over all tags {xxx} and replace them with a user provided value    
-    while [[ $pattern =~ $regex ]]; do
-        match=${BASH_REMATCH[@]}
-        
-        # handle "special" tags
-        case $match in
-        "{date}")
-            getDate ${match}
-            ;;
-        "{skip}")
-            skip=TRUE
-            break
-            ;;
-        "{delete}")
-            pattern="DELETE"
-            ;;
-        *)
-            createList ${match}
-            ;;
-        esac
-    done
+        # iterate over all tags {xxx} and replace them with a user provided value    
+        while [[ $pattern =~ $regex ]]; do
+            match=${BASH_REMATCH[@]}
 
-    if [[ $pattern = "" ]]; then
-        echo "ERROR: empty pattern"  
-        finish;
+            # handle "special" tags
+            case $match in
+            "{date}")
+                getDate ${match}
+                ;;
+            "{skip}")
+                echo "SET SKIP: $skip"
+                skip=true
+                break
+                ;;
+            "{delete}")
+                pattern="DELETE"
+                break
+                ;;
+            *)
+                createList ${match}
+                ;;
+            esac
+        done
+
+        echo "Pattern is '$pattern'"
+        if [[ $pattern = "" ]]; then
+            skip=true  
+        fi
+
+        lastvalues[recent]="$pattern"
+        if $skip; then  
+            echo "skip file '$1' for renaming"
+        else
+            renameFile "$1" $pattern $ext
+        fi
+        # manipulate image files
+        case "$ext" in
+    		pdf) ;;
+    		png)
+                echo "png"
+                ;;
+            jpg)
+                echo "jpg"
+                ;;
+            jpeg)
+                echo "jpeg"
+    			;;
+            *) ;;
+    	esac
+    else
+        finish
     fi
-
-    if [[ skip ]]; then
-        echo "SKIP"
-    fi
-    lastvalues[recent]="$pattern"
-    renameFile $1 $pattern $ext
-    # manipulate image files
-    	case "$2" in
-		pdf) ;;
-		png)
-            echo "png"
-            ;;
-        jpg)
-            echo "jpg"
-            ;;
-        jpeg)
-            echo "jpeg"
-			;;
-        *) ;;
-	esac
-    
     #kill preview application
     if [ "$PID" != "" ]; then
-	    kill $PID
+    	    kill $PID
     fi
     
-    skip=FALSE
+    skip=false
     shift
 done
