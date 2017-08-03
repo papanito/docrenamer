@@ -192,6 +192,9 @@ do
         done
 
         echo "Pattern is '$pattern'"
+        pattern=$(echo $pattern | sed -r 's/[\_\_]//g')
+        pattern=$(echo $pattern | sed -r 's/ /\./g')
+        echo "Pattern is '$pattern'"
         if [[ $pattern = "" ]]; then
             skip=true  
         fi
@@ -206,13 +209,13 @@ do
         case "$ext" in
     		pdf) ;;
     		png)
-                echo "png"
+                convertToPdf $filename_new
                 ;;
             jpg)
-                echo "jpg"
+                convertToPdf $filename_new
                 ;;
             jpeg)
-                echo "jpeg"
+                convertToPdf $filename_new
     			;;
             *) ;;
     	esac
