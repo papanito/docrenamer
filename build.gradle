@@ -1,0 +1,8 @@
+description = 'Script deployment'
+version = '0.1'
+
+def dst = "~/.local/share/nautilus/scripts"
+task copy(type: Copy) {
+    from './DocRenamer'
+    into dst
+}
