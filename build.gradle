@@ -4,19 +4,20 @@ version = '0.1'
 def dst = "~/.local/share/nautilus/scripts"
 def docrenvar = "~/Workspaces/config-files/docrenamer/"
 
-//copy files to nautilus script directory
+//copy script to nautilus script directory
 task copy(type: Copy) {
-    from (docrenvar) {
-        include 'variables.cfg'
+    from('.') {
         include 'DocRenamer'
     }
     into dst
 }
 
-//private variable file is not on project directory, therefore copy
+//private variable file is not on project directory, therefore copy from other location
 task getvar(type: Copy) {
-    from docrenvar
-    into '.'
+    from(docrenvar) {
+        include 'variables.cfg'
+    }
+    into dst 
 }
 
 //get latest variables.cfg and copy files to nautilus script directory
