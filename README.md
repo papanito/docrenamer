@@ -1,7 +1,10 @@
-#Abstract
+# Abstract
 This script is intended to be used as nautilus-script and shall help to rename files to a specifc naming schema
 
-#Basic Idea
+# Background
+I usually scan all my paper documents (no ocr) so I want to be able to find them easily. Therefore I rename them to a specific naming scheme (and save them in a well defined folder structure)
+
+# Script Summary
 There is a config file 'variables.cfg' which defines the patterns and values for the tags.
 a pattern looks like this and is stored in the array 'main'
 ```{issuer}_{date}_Invoice.{invoiceid}```
