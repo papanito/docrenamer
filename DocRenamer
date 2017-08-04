@@ -14,6 +14,7 @@ function getDate() {
 function viewImage() {
 	filename_orig=$1
 	ext=${filename_orig:(-3)}
+    ext=${ext,,}
 
 	case $ext in
 	png) # open image with eog
@@ -125,9 +126,9 @@ function createList() {
         else
 	        while [[ $pattern =~ "$1" ]]; do
                value=`zenity --list --title "$text_please_select item '$1'" --height=500 --width=$width --radiolist --column "Pick" --column "Subject" $options`
-	        	if [ "$value" = "" ]; then
-	        		finish;
-	        	fi
+	        	#if [ "$value" = "" ]; then
+	        		#finish;
+	        	#fi
 	        	pattern=${pattern/${1}/${value}}
     	    done
         fi
@@ -192,8 +193,8 @@ do
         done
 
         echo "Pattern is '$pattern'"
-        pattern=$(echo $pattern | sed -r 's/[\_\_]//g')
-        pattern=$(echo $pattern | sed -r 's/ /\./g')
+        pattern=$(echo $pattern | sed -r 's/\_\_//g')
+        pattern=$(echo $pattern | sed -r 's/\_\.//g')
         echo "Pattern is '$pattern'"
         if [[ $pattern = "" ]]; then
             skip=true  
