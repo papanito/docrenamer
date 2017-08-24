@@ -194,7 +194,8 @@ do
 
         echo "Pattern is '$pattern'"
         pattern=$(echo $pattern | sed -r 's/\_\_//g')
-        pattern=$(echo $pattern | sed -r 's/\_\.//g')
+        pattern=$(echo $pattern | sed -r 's/\_\./\./g')
+        pattern=$(echo $pattern | sed -r 's/\.\_//g')
         echo "Pattern is '$pattern'"
         if [[ $pattern = "" ]]; then
             skip=true  
