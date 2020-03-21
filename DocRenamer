@@ -47,7 +47,7 @@ function renameFile() {
         y=1
         filename_new="$2"
         ext=$3
-    
+
         while [ -f "$filename_new.$ext" ]; do
             count="0$y"
             count=${count:(-2)}
@@ -69,6 +69,7 @@ function convertToPdf() {
     pdf_file=`echo "$1" | sed 's/\.\w*$/.pdf/'`
     /usr/bin/convert -quality 90 "$1" "$pdf_file"
 }
+
 # kills document reader before exiting script
 function finish {
     # kill image viewer
@@ -203,16 +204,17 @@ do
         done
 
         echo "Pattern is '$pattern'"
-        pattern=$(echo $pattern | sed -r 's/\_\_//g')
-        pattern=$(echo $pattern | sed -r 's/\_\./\./g')
-        pattern=$(echo $pattern | sed -r 's/\.\_//g')
+        pattern=$(echo $pattern | sed -r 's/__//g')
+        pattern=$(echo $pattern | sed -r 's/_$//g')
+        pattern=$(echo $pattern | sed -r 's/\._//g')
         echo "Pattern is '$pattern'"
+
         if [[ $pattern = "" ]]; then
             skip=true  
         fi
 
         lastvalues[recent]="$pattern"
-        if $skip; then  
+        if $skip; then
             echo "skip file '$1' for renaming"
         else
             renameFile "$1" $pattern $ext
