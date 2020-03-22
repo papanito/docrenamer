@@ -92,7 +92,7 @@ function createFreetext() {
        done
 }
 
-# loads array from variables.cfg into a list-dialog
+# loads array from docrenamer.cfg into a list-dialog
 # use environment variable DOCRENAMERCONFIGDIR
 function createList() {
     listName=$(echo $1 | sed -r 's/[\{\}]//g')
@@ -105,7 +105,7 @@ function createList() {
     local width=200
     local width_new=200
 
-    #if array exists itn variables.cfg then element {xx} shall be parsed
+    #if array exists itn docrenamer.cfg then element {xx} shall be parsed
     if [ ${#names[@]} -gt 0 ]; then
         for i in ${names[@]}; do
             #expand width of dialog to see longest item
@@ -115,7 +115,7 @@ function createList() {
             fi
             options=$options" FALSE "$i
         done
-        # add {freetext} to all lists, in case desired value is not yet in variables.cfg
+        # add {freetext} to all lists, in case desired value is not yet in docrenamer.cfg
         options=$options" FALSE {freetext}"
 
         if [[ "$1" = "main" ]]; then
@@ -162,14 +162,14 @@ do
     ext=${filename_orig:(-3)}
     
     viewImage "$1"
-    # load variables.cfg for each file (allows modifications of values while script is running)
+    # load docrenamer.cfg for each file (allows modifications of values while script is running)
     # good idea? memory consumption or other negative impact?
     # DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-    #echo "$DOCRENAMERCONFIGDIR/variables.cfg"
+    #echo "$DOCRENAMERCONFIGDIR/docrenamer.cfg"
     if [ -z ${DOCRENAMERCONFIGDIR+x} ]; then
-        export DOCRENAMERCONFIGDIR=~
+        export DOCRENAMERCONFIGDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
     fi
-    source "$DOCRENAMERCONFIGDIR/variables.cfg"
+    source "$DOCRENAMERCONFIGDIR/docrenamer.cfg"
 
     #create a list of all patterns to select
     createList "main"
