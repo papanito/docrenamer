@@ -89,7 +89,7 @@ function createFreetext() {
            #fi
            pattern=${pattern/${1}/${value}}
         lastvalues[$varname]="$value"
-       done
+    done
 }
 
 # loads array from docrenamer.cfg into a list-dialog
@@ -130,7 +130,7 @@ function createList() {
             pattern=`zenity --list --title "$text_please_select item '$1'" --height=500 --width=$width --radiolist --column "Pick" --column "Subject" $options`
         else
             while [[ $pattern =~ "$1" ]]; do
-               value=`zenity --list --title "$text_please_select item '$1'" --height=500 --width=$width --radiolist --column "Pick" --column "Subject" $options`
+                value=`zenity --list --title "$text_please_select item '$1'" --height=500 --width=$width --radiolist --column "Pick" --column "Subject" $options`
                 #if [ "$value" = "" ]; then
                     #finish;
                 #fi
@@ -166,9 +166,7 @@ do
     # good idea? memory consumption or other negative impact?
     # DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     #echo "$DOCRENAMERCONFIGDIR/docrenamer.cfg"
-    if [ -z ${DOCRENAMERCONFIGDIR+x} ]; then
-        export DOCRENAMERCONFIGDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-    fi
+    [ -z ${DOCRENAMERCONFIGDIR+x} ] && export DOCRENAMERCONFIGDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
     source "$DOCRENAMERCONFIGDIR/docrenamer.cfg"
 
     #create a list of all patterns to select
@@ -209,9 +207,7 @@ do
         pattern=$(echo $pattern | sed -r 's/\._//g')
         echo "Pattern is '$pattern'"
 
-        if [[ $pattern = "" ]]; then
-            skip=true  
-        fi
+        [[ $pattern = "" ]] && skip=true
 
         lastvalues[recent]="$pattern"
         if $skip; then
@@ -237,10 +233,8 @@ do
         finish
     fi
     #kill preview application
-    if [ "$PID" != "" ]; then
-            kill $PID
-    fi
-    
+    [ "$PID" != "" ] && kill $PID
+
     skip=false
     shift
 done
